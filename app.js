@@ -589,16 +589,25 @@
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     const el = entry.target;
+                    if (el.dataset.typed === 'true') return;
                     if (el._typewriterTimeout) clearTimeout(el._typewriterTimeout);
-                    const fullText = el.textContent;
+
+                    const fullText = el.dataset.originalText || el.textContent;
+                    el.dataset.originalText = fullText;
                     el.textContent = '';
-                    el.dataset.typed = 'false';
+                    el.dataset.typed = 'true';
                     typewriter(el, fullText);
+
+                    coupleTypewriterObserver.unobserve(el);
                 }
             });
         }, { threshold: 0.2 });
 
-        coupleTexts.forEach(el => coupleTypewriterObserver.observe(el));
+        coupleTexts.forEach(el => {
+            if (el.dataset.typed !== 'true') {
+                coupleTypewriterObserver.observe(el);
+            }
+        });
     }
 
     function setupMapInteractions() {
@@ -1006,81 +1015,47 @@
         const wrapper = document.querySelector('.gallery-track-wrapper');
         if (!track || !wrapper) return;
 
-        const isDesktop = window.innerWidth > 1024;
-
-        if (isDesktop) {
-            function panOnScroll() {
-                const moments = document.getElementById('moments');
-                if (!moments || !track) return;
-
-                const viewport = moments.querySelector('.gallery-viewport');
-                if (!viewport) return;
-
-                const rect = moments.getBoundingClientRect();
-                const viewportRect = viewport.getBoundingClientRect();
-
-                const scrollableHeight = Math.max(1, moments.offsetHeight - window.innerHeight);
-                const scrolled = Math.min(scrollableHeight, Math.max(0, -rect.top));
-                const progress = scrollableHeight > 0 ? scrolled / scrollableHeight : 0;
-
-                const maxTranslate = Math.max(0, track.scrollWidth - window.innerWidth);
-                track.style.transform = `translateX(${-progress * maxTranslate}px)`;
-            }
-
-            window.addEventListener('scroll', () => requestAnimationFrame(panOnScroll));
-            window.addEventListener('resize', () => requestAnimationFrame(panOnScroll));
-            panOnScroll();
-
-            const cards = track.querySelectorAll('.gallery-card');
-            cards.forEach(card => {
-                card.addEventListener('mousemove', (e) => {
-                    const rect = card.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-                    const centerX = rect.width / 2;
-                    const centerY = rect.height / 2;
-                    const rotateX = ((y - centerY) / centerY) * -8;
-                    const rotateY = ((x - centerX) / centerX) * 8;
-                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
-                });
-                card.addEventListener('mouseleave', () => {
-                    card.style.transform = '';
-                });
-            });
-            imagesArray = Array.from(cards);
-            return;
-        }
-
+        const cards = track.querySelectorAll('.gallery-card');
         let isDown = false;
         let startX, scrollLeftPos;
 
-        wrapper.addEventListener('mousedown', (e) => {
+        function onMouseDown(e) {
             isDown = true;
             wrapper.style.cursor = 'grabbing';
             startX = e.pageX - wrapper.offsetLeft;
             scrollLeftPos = wrapper.scrollLeft;
-        });
+        }
 
-        wrapper.addEventListener('mouseleave', () => {
+        function onMouseLeave() {
             isDown = false;
             wrapper.style.cursor = 'grab';
-        });
+        }
 
-        wrapper.addEventListener('mouseup', () => {
+        function onMouseUp() {
             isDown = false;
             wrapper.style.cursor = 'grab';
-        });
+        }
 
-        wrapper.addEventListener('mousemove', (e) => {
+        function onMouseMove(e) {
             if (!isDown) return;
             e.preventDefault();
             const x = e.pageX - wrapper.offsetLeft;
             const walk = (x - startX) * 1.5;
             wrapper.scrollLeft = scrollLeftPos - walk;
-        });
+        }
 
-        // 3D Tilt Effect
-        const cards = document.querySelectorAll('.gallery-card');
+        function onWheel(e) {
+            if (Math.abs(e.deltaX) < Math.abs(e.deltaY)) {
+                wrapper.scrollLeft += e.deltaY;
+            }
+        }
+
+        wrapper.addEventListener('mousedown', onMouseDown);
+        wrapper.addEventListener('mouseleave', onMouseLeave);
+        wrapper.addEventListener('mouseup', onMouseUp);
+        wrapper.addEventListener('mousemove', onMouseMove);
+        wrapper.addEventListener('wheel', onWheel, { passive: true });
+
         cards.forEach(card => {
             card.addEventListener('mousemove', (e) => {
                 const rect = card.getBoundingClientRect();
@@ -1090,7 +1065,6 @@
                 const centerY = rect.height / 2;
                 const rotateX = ((y - centerY) / centerY) * -8;
                 const rotateY = ((x - centerX) / centerX) * 8;
-
                 card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
             });
 
@@ -1100,6 +1074,10 @@
         });
 
         imagesArray = Array.from(cards);
+
+        window.addEventListener('resize', () => {
+            wrapper.style.cursor = 'grab';
+        });
     }
 
 
@@ -1141,14 +1119,11 @@
              }
          });
 
-          journeyVideo.addEventListener('ended', () => {
-              bgMusic.play().catch(() => {});
-              musicWasPlayingBeforeVideo = false;
-          });
-
-          const journeySection = document.getElementById('journey');
-          if (!journeySection) return;
-      }
+           journeyVideo.addEventListener('ended', () => {
+               bgMusic.play().catch(() => {});
+               musicWasPlayingBeforeVideo = false;
+           });
+       }
 
      // ---- Music Player & Visualizer ----
      function setupAudioVisualizer() {

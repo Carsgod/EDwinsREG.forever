@@ -158,6 +158,16 @@ img {
 
 /* Prevent overflow on mobile */
 @media (max-width: 768px) {
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+
+    html, body {
+        overflow-x: hidden;
+    }
+
     img,
     video,
     iframe,
@@ -182,6 +192,42 @@ img {
     }
 
     .celebration-stage {
+        overflow-x: hidden;
+    }
+
+    .couple,
+    .journey,
+    .details,
+    .moments,
+    .rsvp,
+    .contact,
+    .wishes,
+    .countdown,
+    .footer {
+        overflow-x: hidden;
+    }
+
+    .couple-frames-outer,
+    .journey-container,
+    .celebration-stage,
+    .gallery-viewport,
+    .gallery-track-wrapper,
+    .rsvp-container,
+    .contact-container,
+    .wishes-container,
+    .countdown-container,
+    .footer-top {
+        overflow-x: hidden;
+    }
+
+    .couple-solo--groom,
+    .couple-solo--bride,
+    .couple-portrait-frame,
+    .journey-image,
+    .celebration-card,
+    .gallery-card,
+    .wish-card-prism {
+        max-width: 100%;
         overflow-x: hidden;
     }
 }
@@ -340,14 +386,12 @@ img {
 
 .reveal-blur {
     opacity: 0;
-    filter: blur(10px);
     transform: translateY(20px);
-    transition: opacity 1.4s ease-out, filter 1.4s ease-out, transform 1.4s ease-out;
+    transition: opacity 1.4s ease-out, transform 1.4s ease-out;
 }
 
 .reveal-blur.active {
     opacity: 1;
-    filter: blur(0);
     transform: translateY(0);
 }
 
@@ -431,7 +475,6 @@ img {
 
 .navbar.scrolled {
     background: rgba(253, 251, 247, 0.95);
-    backdrop-filter: blur(10px);
     box-shadow: var(--shadow-soft);
     padding: 1rem 0;
 }
@@ -673,12 +716,6 @@ img {
 }
 
 /* Mobile hero height adjustment */
-@media (max-width: 480px) {
-
-}
-
-@media (max-width: 360px) {
-}
 
 .hero-video-wrapper {
     position: absolute;
@@ -896,8 +933,6 @@ img {
 }
 
 /* Hide scroll indicator on mobile */
-@media (max-width: 768px) {
-}
 
 /* ---- Couples Section ---- */
 .couple {
@@ -1250,7 +1285,7 @@ img {
     .couple-solo--groom,
     .couple-solo--bride {
         width: 100%;
-        max-width: 80vw;
+        max-width: 100%;
     }
 
     .couple-solo--groom {
@@ -1320,14 +1355,16 @@ img {
 
     .couple-solo--groom,
     .couple-solo--bride {
-        max-width: 80vw;
+        max-width: 100%;
+        overflow-x: hidden;
     }
 
     .couple-portrait-frame {
         aspect-ratio: 4/5;
         border-radius: 14px;
-        width: 80vw;
-        max-width: 80vw;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
     }
 
     .couple-connector {
@@ -1419,6 +1456,8 @@ img {
     .journey-image,
     .journey-text {
         width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
     }
 }
 
@@ -1441,6 +1480,7 @@ img {
         height: auto;
         aspect-ratio: 4 / 3;
         background: linear-gradient(135deg, rgba(0,0,0,0.35), rgba(0,0,0,0.25));
+        overflow-x: hidden;
     }
 
     .journey-chapter.reverse .journey-image {
@@ -2203,25 +2243,40 @@ img {
     }
 }
 
-/* Desktop: vertical page scroll drives horizontal gallery pan */
+/* Desktop: horizontal scroll gallery */
 @media (min-width: 1025px) {
     .moments {
-        min-height: 280vh;
+        padding: var(--space-xxl) 0;
+        background: var(--color-cream);
+        overflow-x: hidden;
     }
 
     .gallery-viewport {
-        position: sticky;
-        top: 0;
-        height: 100vh;
-        display: flex;
-        align-items: center;
-        overflow: hidden;
+        position: relative;
+        width: 100%;
+        overflow: visible;
     }
 
     .gallery-track-wrapper {
-        overflow: visible;
-        cursor: default;
-        flex-shrink: 0;
+        overflow-x: auto;
+        overflow-y: hidden;
+        cursor: grab;
+        scrollbar-width: thin;
+        scrollbar-color: var(--color-gold) transparent;
+        padding: var(--space-lg) 0;
+    }
+
+    .gallery-track-wrapper::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    .gallery-track-wrapper::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .gallery-track-wrapper::-webkit-scrollbar-thumb {
+        background: var(--color-gold);
+        border-radius: 3px;
     }
 
     .gallery-track {
@@ -2308,7 +2363,7 @@ img {
     transform: translateY(20px);
     opacity: 0;
     transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    backdrop-filter: blur(4px);
+    backdrop-filter: none;
 }
 
 .gallery-card:hover .gallery-card-caption {
@@ -3419,8 +3474,6 @@ cite {
 }
 
 /* Reduce animation on mobile */
-@media (max-width: 768px) {
-}
 
 @keyframes flipNumber {
     0% {
@@ -3474,9 +3527,6 @@ cite {
     font-style: italic;
     color: rgba(255, 255, 255, 0.7);
     letter-spacing: 0.05em;
-}
-
-@media (max-width: 480px) {
 }
 
 /* Responsive Countdown */
@@ -3540,12 +3590,15 @@ cite {
         justify-content: center;
         width: 100%;
         padding: 0 var(--space-xs);
+        overflow-x: hidden;
     }
 
     .time-block {
         min-width: 70px;
         padding: var(--space-xs);
         border-radius: 8px;
+        max-width: 100%;
+        overflow-x: hidden;
     }
 
     .time-value {
@@ -3563,6 +3616,7 @@ cite {
     .countdown-container {
         padding: var(--space-md) var(--space-sm);
         margin: var(--space-xs);
+        overflow-x: hidden;
     }
 
     .countdown-title {
@@ -3807,29 +3861,7 @@ cite {
     margin-bottom: 0;
 }
 
-.footer-info-content strong {
-    color: var(--color-gold-light);
-    font-weight: 600;
-}
-
-.footer-info-content strong {
-    color: var(--color-gold-light);
-    font-weight: 600;
-}
-
-.footer-note {
-    margin-top: var(--space-sm);
-    font-size: 0.9rem;
-    color: rgba(253, 251, 247, 0.6);
-    font-style: italic;
-    font-weight: 400;
-    padding: var(--space-md);
-    background: rgba(225, 119, 59, 0.08);
-    border-radius: var(--radius-md);
-    border-left: 3px solid var(--color-gold-light);
-}
-
-.footer-message {
+.footer-info-content p:last-child {
     font-family: var(--font-serif);
     font-size: 1.1rem;
     line-height: 1.8;
