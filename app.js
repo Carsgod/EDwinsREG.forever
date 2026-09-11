@@ -771,6 +771,33 @@
                 startAutoplay();
             }, { passive: true });
 
+            slider.addEventListener('click', (e) => {
+                if (touchActive) return;
+                if (e.target.closest('.slider-controls')) return;
+                if (e.target.closest('.play-video-btn')) return;
+                if (e.target.closest('.chapter-video-wrapper')) return;
+                chapter.classList.toggle('peek');
+            });
+
+            slider.addEventListener('mouseenter', () => {
+                chapter.classList.remove('peek');
+            });
+
+            let touchActive = false;
+            slider.addEventListener('touchstart', () => {
+                touchActive = true;
+                chapter.classList.add('peek');
+            }, { passive: true });
+
+            slider.addEventListener('touchend', () => {
+                chapter.classList.remove('peek');
+                setTimeout(() => { touchActive = false; }, 300);
+            });
+
+            slider.addEventListener('touchmove', () => {
+                chapter.classList.remove('peek');
+            }, { passive: true });
+
             if (videoWrapper && playVideoBtn && video) {
                 playVideoBtn.addEventListener('click', () => {
                     videoWrapper.classList.add('active');
