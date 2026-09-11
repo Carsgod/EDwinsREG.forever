@@ -132,64 +132,169 @@
             <h2 class="section-title">The Chapters of Us</h2>
         </div>
 
-        <div class="journey-container section-reveal from-left">
-            <!-- Chapter 1 -->
-            <div class="journey-chapter">
-                <div class="journey-image journey-image-right reveal-left">
-                    <img class="journey-thumb" src="images 3/IMG_9902.jpeg" alt="The first glance" width="800" height="500" decoding="async">
-                    <video class="journey-video" loop playsinline>
-                        <source src="how we met.mp4" type="video/mp4">
-                    </video>
-                    <div class="video-controls">
-                        <button class="video-control-btn play-pause" aria-label="Play/Pause">
-                            <svg class="play-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"></polygon></svg>
-                            <svg class="pause-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
-                        </button>
-                        <button class="video-control-btn mute-btn" aria-label="Mute/Unmute">
-                            <svg class="mute-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="11,5 6,9 2,9 2,15 6,15 11,19 11,10 17,10 17,14 11,14 11,5"></polygon></svg>
-                            <svg class="unmute-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><polygon points="11,5 6,9 2,9 2,15 6,15 11,19 11,10 17,10 17,14 11,14 11,5"></polygon><line x1="16" y1="8" x2="21" y2="13"></line><line x1="21" y1="8" x2="16" y2="13"></line></svg>
-                        </button>
-                        <button class="video-control-btn volume-btn" aria-label="Increase Volume">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="3,9 9,9 12,5 18,5 18,19 12,19 9,15 3,15 3,9"></polygon></svg>
-                        </button>
+        <!-- Chapter 1 -->
+        <div class="journey-chapter reveal" data-chapter="1">
+            <div class="chapter-slider">
+                <div class="slide active" data-index="0">
+                    <img src="images/chapter 1 first for scroll.JPG" alt="The first glance" class="slide-img" loading="lazy">
+                    <div class="slide-overlay">
+                        <span class="chapter-number">Chapter One</span>
+                        <h3>The First Glance</h3>
+                        <p>It all began in early 2023 when a mutual friend from church introduced us. Edwin noticed Regina's warm smile and welcoming nature while she was ushering, and in that moment, something beautiful quietly started.</p>
+                        <div class="chapter-date">Early 2023</div>
+                        <button class="play-video-btn">Watch the Story ▶</button>
                     </div>
                 </div>
-                <div class="journey-text reveal-right">
-                    <span class="chapter-number">Chapter One</span>
-                    <h3>The First Glance</h3>
-                    <p>
-                        It all began in early 2023 when a mutual friend from church introduced us. Edwin noticed Regina’s warm smile and welcoming nature while she was ushering, and in that moment, something beautiful quietly started.
-                    </p>
-                    <button class="play-video-btn">Watch the Story ▶</button>
-                    <div class="chapter-date">Early 2023</div>
+                <div class="slide" data-index="1">
+                    <img src="images/chapter 1 second for scroll.jpeg" alt="First conversation" class="slide-img" loading="lazy">
+                    <div class="slide-overlay">
+                        <span class="chapter-number">Chapter One</span>
+                        <h3>The First Glance</h3>
+                        <p>A simple introduction at church opened the door to a love story neither of us saw coming, but both of us felt instantly.</p>
+                        <div class="chapter-date">Early 2023</div>
+                    </div>
+                </div>
+                <div class="slide" data-index="2">
+                    <img src="images/chapter 1 third for scroll.jpeg" alt="First meeting" class="slide-img" loading="lazy">
+                    <div class="slide-overlay">
+                        <span class="chapter-number">Chapter One</span>
+                        <h3>The First Glance</h3>
+                        <p>What started as a casual hello soon became the beginning of everything—quiet moments, stolen glances, and hearts beginning to align.</p>
+                        <div class="chapter-date">Early 2023</div>
+                    </div>
+                </div>
+                <div class="slide" data-index="3">
+                    <img src="images/chapter 1 fourth for scroll.jpeg" alt="The beginning" class="slide-img" loading="lazy">
+                    <div class="slide-overlay">
+                        <span class="chapter-number">Chapter One</span>
+                        <h3>The First Glance</h3>
+                        <p>That first moment wasn't loud or dramatic—it was gentle, steady, and felt like coming home before we even knew each other's names.</p>
+                        <div class="chapter-date">Early 2023</div>
+                    </div>
+                </div>
+
+                <div class="chapter-video-wrapper">
+                    <video class="chapter-video" loop playsinline>
+                        <source src="how we met.mp4" type="video/mp4">
+                    </video>
+                    <button class="video-back-btn" aria-label="Back to gallery">✕ Back to Gallery</button>
+                </div>
+
+                <div class="slider-controls">
+                    <button class="slider-arrow prev" aria-label="Previous slide">‹</button>
+                    <div class="slider-dots">
+                        <button class="dot active" data-index="0" aria-label="Slide 1"></button>
+                        <button class="dot" data-index="1" aria-label="Slide 2"></button>
+                        <button class="dot" data-index="2" aria-label="Slide 3"></button>
+                        <button class="dot" data-index="3" aria-label="Slide 4"></button>
+                    </div>
+                    <button class="slider-arrow next" aria-label="Next slide">›</button>
                 </div>
             </div>
+        </div>
 
-            <!-- Chapter 2 -->
-            <div class="journey-chapter reverse">
-                <div class="journey-image journey-image-left reveal-right">
-                    <img src="images/IMG_7173.JPG" alt="Getting to know each other" width="800" height="500" decoding="async">
-                    <div class="image-frame"></div>
+        <!-- Chapter 2 -->
+        <div class="journey-chapter reveal" data-chapter="2">
+            <div class="chapter-slider">
+                <div class="slide active" data-index="0">
+                    <img src="images 2/chapter 2 first for scrolling.JPG" alt="Getting to know each other" class="slide-img" loading="lazy">
+                    <div class="slide-overlay">
+                        <span class="chapter-number">Chapter Two</span>
+                        <h3>Getting to Know Each Other</h3>
+                        <p>We didn't talk much initially beyond the occasional check-ins. A few months later, things changed—we spoke more often, spent more time together, and got to know each other better.</p>
+                        <div class="chapter-date">Mid 2023</div>
+                    </div>
                 </div>
-                <div class="journey-text reveal-left">
-                    <span class="chapter-number">Chapter Two</span>
-                    <h3>Getting to Know Each Other</h3>
-                    <p>We didn’t talk much initially beyond the occasional check-ins. A few months later, things changed—we spoke more often, spent more time together, and got to know each other better.</p>
-                    <div class="chapter-date">Mid 2023</div>
+                <div class="slide" data-index="1">
+                    <img src="images 2/chapter 2 second for scrolling.jpeg" alt="Growing closer" class="slide-img" loading="lazy">
+                    <div class="slide-overlay">
+                        <span class="chapter-number">Chapter Two</span>
+                        <h3>Getting to Know Each Other</h3>
+                        <p>Every conversation became a little longer, every meeting a little warmer. We found comfort in the simplest exchanges and excitement in every shared moment.</p>
+                        <div class="chapter-date">Mid 2023</div>
+                    </div>
+                </div>
+                <div class="slide" data-index="2">
+                    <img src="images 2/chapter 2 third for scrolling.jpeg" alt="Deepening connection" class="slide-img" loading="lazy">
+                    <div class="slide-overlay">
+                        <span class="chapter-number">Chapter Two</span>
+                        <h3>Getting to Know Each Other</h3>
+                        <p>Laughter came easier, silences felt comfortable, and we realized we were building something real—one conversation at a time.</p>
+                        <div class="chapter-date">Mid 2023</div>
+                    </div>
+                </div>
+                <div class="slide" data-index="3">
+                    <img src="images 2/chapter 2 fourth for scrolling.JPG" alt="Together" class="slide-img" loading="lazy">
+                    <div class="slide-overlay">
+                        <span class="chapter-number">Chapter Two</span>
+                        <h3>Getting to Know Each Other</h3>
+                        <p>By mid-2023, what began as polite check-ins had blossomed into genuine connection—and we both knew this was worth pursuing.</p>
+                        <div class="chapter-date">Mid 2023</div>
+                    </div>
+                </div>
+
+                <div class="slider-controls">
+                    <button class="slider-arrow prev" aria-label="Previous slide">‹</button>
+                    <div class="slider-dots">
+                        <button class="dot active" data-index="0" aria-label="Slide 1"></button>
+                        <button class="dot" data-index="1" aria-label="Slide 2"></button>
+                        <button class="dot" data-index="2" aria-label="Slide 3"></button>
+                        <button class="dot" data-index="3" aria-label="Slide 4"></button>
+                    </div>
+                    <button class="slider-arrow next" aria-label="Next slide">›</button>
                 </div>
             </div>
+        </div>
 
-            <!-- Chapter 3 -->
-            <div class="journey-chapter">
-                <div class="journey-image journey-image-right reveal-scale">
-                    <img src="images 3/park.jpeg" alt="Forever begins" width="800" height="500" decoding="async">
-                    <div class="image-frame"></div>
+        <!-- Chapter 3 -->
+        <div class="journey-chapter reveal" data-chapter="3">
+            <div class="chapter-slider">
+                <div class="slide active" data-index="0">
+                    <img src="images 3/chapter 3 first for scrolling.jpeg" alt="Forever begins" class="slide-img" loading="lazy">
+                    <div class="slide-overlay">
+                        <span class="chapter-number">Chapter Three</span>
+                        <h3>Our Forever</h3>
+                        <p>In April 2024, what began as a simple introduction evolved into courtship and grew into a beautiful love story. Two and a half years later, here we are—grateful for God's perfect timing and excited to begin our forever.</p>
+                        <div class="chapter-date">April 2024</div>
+                    </div>
                 </div>
-                <div class="journey-text reveal-rotate">
-                    <span class="chapter-number">Chapter Three</span>
-                    <h3>Our Forever</h3>
-                    <p>In April 2024, what began as a simple introduction evolved into courtship and grew into a beautiful love story. Two and a half years later, here we are—grateful for God’s perfect timing and excited to begin our forever. ❤️</p>
-                    <div class="chapter-date">April 2024</div>
+                <div class="slide" data-index="1">
+                    <img src="images 3/chapter 3 second for scrolling.jpeg" alt="Forever begins" class="slide-img" loading="lazy">
+                    <div class="slide-overlay">
+                        <span class="chapter-number">Chapter Three</span>
+                        <h3>Our Forever</h3>
+                        <p>From that first church introduction to this beautiful promise of forever—every step felt like divine timing leading us here.</p>
+                        <div class="chapter-date">April 2024</div>
+                    </div>
+                </div>
+                <div class="slide" data-index="2">
+                    <img src="images 3/chapter 3 third for scrolling.jpeg" alt="Romantic moments" class="slide-img" loading="lazy">
+                    <div class="slide-overlay">
+                        <span class="chapter-number">Chapter Three</span>
+                        <h3>Our Forever</h3>
+                        <p>Love isn't just in grand gestures—it's in quiet mornings, gentle hands, and choosing each other even when the world gets loud.</p>
+                        <div class="chapter-date">April 2024</div>
+                    </div>
+                </div>
+                <div class="slide" data-index="3">
+                    <img src="images 3/chapter 3 fourth forscrolling.jpg" alt="Wedding look" class="slide-img" loading="lazy">
+                    <div class="slide-overlay">
+                        <span class="chapter-number">Chapter Three</span>
+                        <h3>Our Forever</h3>
+                        <p>And now we stand at the threshold of marriage—not just as two people in love, but as two souls who chose each other, every single day.</p>
+                        <div class="chapter-date">April 2024</div>
+                    </div>
+                </div>
+
+                <div class="slider-controls">
+                    <button class="slider-arrow prev" aria-label="Previous slide">‹</button>
+                    <div class="slider-dots">
+                        <button class="dot active" data-index="0" aria-label="Slide 1"></button>
+                        <button class="dot" data-index="1" aria-label="Slide 2"></button>
+                        <button class="dot" data-index="2" aria-label="Slide 3"></button>
+                        <button class="dot" data-index="3" aria-label="Slide 4"></button>
+                    </div>
+                    <button class="slider-arrow next" aria-label="Next slide">›</button>
                 </div>
             </div>
         </div>

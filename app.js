@@ -47,11 +47,8 @@
     const secondsEl = document.getElementById('seconds');
     const particlesContainer = document.getElementById('particles');
 
-    // Journey Video Controls
-    const journeyVideo = document.querySelector('.journey-video');
-    const playPauseBtn = document.querySelector('.journey-image .play-pause');
-    const muteBtn = document.querySelector('.journey-image .mute-btn');
-    const volumeBtn = document.querySelector('.journey-image .volume-btn');
+    // Journey Carousel Elements
+    const journeyVideo = document.querySelector('.chapter-video');
     const playVideoBtn = document.querySelector('.play-video-btn');
 
     // Music Player Elements
@@ -64,7 +61,6 @@
     let currentImageIndex = 0;
     let imagesArray = [];
     let previousValues = { days: -1, hours: -1, minutes: -1, seconds: -1 };
-    let controlsTimeout;
     let coupleTypewriterObserver = null;
 
     // Music Player State
@@ -656,191 +652,151 @@
         setupCoupleTypewriter();
     }
 
-    // ---- Journey Video Controls ----
+    // ---- Journey Carousels ----
+    function initJourneyCarousels() {
+        const chapters = document.querySelectorAll('.journey-chapter');
 
-    function showControls() {
-        if (!playPauseBtn || !playPauseBtn.parentElement) return;
-        const controls = playPauseBtn.closest('.video-controls');
-        if (controls) {
-            controls.classList.add('visible');
-        }
-        resetControlsTimer();
-    }
+        chapters.forEach(chapter => {
+            const slider = chapter.querySelector('.chapter-slider');
+            const slides = chapter.querySelectorAll('.slide');
+            const dots = chapter.querySelectorAll('.dot');
+            const prevBtn = chapter.querySelector('.slider-arrow.prev');
+            const nextBtn = chapter.querySelector('.slider-arrow.next');
+            const videoWrapper = chapter.querySelector('.chapter-video-wrapper');
+            const playVideoBtn = chapter.querySelector('.play-video-btn');
+            const video = chapter.querySelector('.chapter-video');
 
-    function hideControls() {
-        if (!playPauseBtn || !playPauseBtn.parentElement) return;
-        const controls = playPauseBtn.closest('.video-controls');
-        if (controls) {
-            controls.classList.remove('visible');
-        }
-    }
+            if (!slider || !slides.length) return;
 
-    function resetControlsTimer() {
-        clearTimeout(controlsTimeout);
-        controlsTimeout = setTimeout(hideControls, 1000);
-    }
+            let currentIndex = 0;
+            let autoplayInterval = null;
+            const autoplayDelay = 4500;
+            let touchStartX = 0;
+            let touchEndX = 0;
+            let isTransitioning = false;
+            let isInView = false;
 
-    function togglePlayPause() {
-        if (!journeyVideo) return;
+            function showSlide(index) {
+                if (isTransitioning) return;
+                isTransitioning = true;
 
-        const playIcon = playPauseBtn.querySelector('.play-icon');
-        const pauseIcon = playPauseBtn.querySelector('.pause-icon');
+                slides.forEach(s => s.classList.remove('active'));
+                dots.forEach(d => d.classList.remove('active'));
 
-        if (journeyVideo.paused) {
-            journeyVideo.play();
-            playIcon.style.display = 'none';
-            pauseIcon.style.display = 'block';
-        } else {
-            journeyVideo.pause();
-            playIcon.style.display = 'block';
-            pauseIcon.style.display = 'none';
-        }
-    }
+                currentIndex = (index + slides.length) % slides.length;
+                slides[currentIndex].classList.add('active');
+                if (dots[currentIndex]) dots[currentIndex].classList.add('active');
 
-    function toggleMute() {
-        if (!journeyVideo) return;
+                setTimeout(() => {
+                    isTransitioning = false;
+                }, 900);
+            }
 
-        const muteIcon = muteBtn.querySelector('.mute-icon');
-        const unmuteIcon = muteBtn.querySelector('.unmute-icon');
+            function nextSlide() {
+                showSlide(currentIndex + 1);
+            }
 
-        journeyVideo.muted = !journeyVideo.muted;
+            function prevSlide() {
+                showSlide(currentIndex - 1);
+            }
 
-        if (journeyVideo.muted) {
-            muteIcon.style.display = 'block';
-            unmuteIcon.style.display = 'none';
-        } else {
-            muteIcon.style.display = 'none';
-            unmuteIcon.style.display = 'block';
-        }
-    }
+            function startAutoplay() {
+                stopAutoplay();
+                if (!isInView) return;
+                autoplayInterval = setInterval(nextSlide, autoplayDelay);
+            }
 
-    function increaseVolume() {
-        if (!journeyVideo) return;
-
-        journeyVideo.muted = false;
-        journeyVideo.volume = Math.min(1, journeyVideo.volume + 0.2);
-
-        // Update mute button state to show unmuted
-        const muteIcon = muteBtn.querySelector('.mute-icon');
-        const unmuteIcon = muteBtn.querySelector('.unmute-icon');
-        muteIcon.style.display = 'none';
-        unmuteIcon.style.display = 'block';
-    }
-
-    // Double-tap to play/pause on touch devices
-    function setupJourneyVideoTouch() {
-        if (!journeyVideo) return;
-
-        let tapCount = 0;
-        let tapTimeout = null;
-
-        const journeyImage = journeyVideo.closest('.journey-image');
-        if (journeyImage) {
-            journeyImage.addEventListener('touchstart', function(e) {
-                if (e.touches.length === 1) {
-                    tapCount++;
-                    if (tapCount === 1) {
-                        tapTimeout = setTimeout(() => {
-                            tapCount = 0;
-                        }, 300);
-                    } else if (tapCount === 2) {
-                        e.preventDefault();
-                        clearTimeout(tapTimeout);
-                        tapCount = 0;
-                        togglePlayPause();
-                    }
+            function stopAutoplay() {
+                if (autoplayInterval) {
+                    clearInterval(autoplayInterval);
+                    autoplayInterval = null;
                 }
-            });
+            }
 
-            // Show controls on touch for mobile
-            journeyImage.addEventListener('touchstart', function() {
-                showControls();
-            });
-        }
-    }
-
-    function initJourneyVideoControls() {
-        if (!journeyVideo) return;
-
-        const journeyImage = journeyVideo.closest('.journey-image');
-        const hasThumb = journeyImage && journeyImage.querySelector('.journey-thumb');
-
-        if (hasThumb && playVideoBtn) {
-            playVideoBtn.addEventListener('click', function() {
-                const journeyImage = journeyVideo.closest('.journey-image');
-
-                if (journeyImage) {
-                    const isMobile = window.innerWidth <= 768 || 'ontouchstart' in window;
-
-                    if (isMobile) {
-                        const rect = journeyImage.getBoundingClientRect();
-                        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                        const targetScroll = scrollTop + rect.top - 100;
-
-                        window.scrollTo({
-                            top: targetScroll,
-                            behavior: 'smooth'
-                        });
-                    }
-                }
-
-                journeyImage.classList.add('playing');
-                this.style.display = 'none';
-                journeyVideo.currentTime = 0;
-                journeyVideo.play().catch(() => {});
-                showControls();
-                setTimeout(hideControls, 3000);
-            });
-        }
-
-        if (playPauseBtn) {
-            playPauseBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                showControls();
-                togglePlayPause();
-            });
-        }
-
-        if (muteBtn) {
-            muteBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                showControls();
-                toggleMute();
-            });
-        }
-
-        if (volumeBtn) {
-            volumeBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                showControls();
-                increaseVolume();
-            });
-        }
-
-        if (journeyImage) {
-            if (!hasThumb) {
-                journeyImage.addEventListener('mouseenter', showControls);
-                journeyImage.addEventListener('mouseleave', () => {
-                    clearTimeout(controlsTimeout);
-                    controlsTimeout = setTimeout(hideControls, 1000);
-                });
-
-                journeyImage.addEventListener('click', function(e) {
-                    if (!e.target.closest('.video-control-btn')) {
-                        showControls();
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    isInView = entry.isIntersecting;
+                    if (isInView) {
+                        startAutoplay();
+                    } else {
+                        stopAutoplay();
                     }
                 });
-            } else {
-                journeyImage.addEventListener('click', function(e) {
-                    if (!e.target.closest('.video-control-btn')) {
-                        showControls();
-                        setTimeout(hideControls, 1000);
-                    }
+            }, { threshold: 0.3 });
+
+            observer.observe(chapter);
+
+            if (prevBtn) {
+                prevBtn.addEventListener('click', () => {
+                    prevSlide();
+                    startAutoplay();
                 });
             }
-        }
 
-        setupJourneyVideoTouch();
+            if (nextBtn) {
+                nextBtn.addEventListener('click', () => {
+                    nextSlide();
+                    startAutoplay();
+                });
+            }
+
+            dots.forEach(dot => {
+                dot.addEventListener('click', () => {
+                    const index = parseInt(dot.dataset.index, 10);
+                    showSlide(index);
+                    startAutoplay();
+                });
+            });
+
+            slider.addEventListener('mouseenter', stopAutoplay);
+            slider.addEventListener('mouseleave', startAutoplay);
+
+            slider.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+                stopAutoplay();
+            }, { passive: true });
+
+            slider.addEventListener('touchend', (e) => {
+                touchEndX = e.changedTouches[0].screenX;
+                const diff = touchStartX - touchEndX;
+                const threshold = 50;
+
+                if (Math.abs(diff) > threshold) {
+                    if (diff > 0) {
+                        nextSlide();
+                    } else {
+                        prevSlide();
+                    }
+                }
+                startAutoplay();
+            }, { passive: true });
+
+            if (videoWrapper && playVideoBtn && video) {
+                playVideoBtn.addEventListener('click', () => {
+                    videoWrapper.classList.add('active');
+                    video.currentTime = 0;
+                    video.play().catch(() => {});
+                    stopAutoplay();
+                });
+
+                const returnFromVideo = () => {
+                    video.pause();
+                    videoWrapper.classList.remove('active');
+                    startAutoplay();
+                };
+
+                video.addEventListener('ended', returnFromVideo);
+                video.addEventListener('click', returnFromVideo);
+
+                const backBtn = chapter.querySelector('.video-back-btn');
+                if (backBtn) {
+                    backBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        returnFromVideo();
+                    });
+                }
+            }
+        });
     }
 
     // ---- Confetti System ----
@@ -1236,19 +1192,9 @@
         if (isScrolledPast && !journeyVideo.paused) {
             journeyVideo.pause().catch(() => {});
 
-            const journeyImage = journeyVideo.closest('.journey-image');
-            if (journeyImage) {
-                journeyImage.classList.remove('playing');
-            }
-
-            const playIcon = playPauseBtn?.querySelector('.play-icon');
-            const pauseIcon = playPauseBtn?.querySelector('.pause-icon');
-            if (playIcon) playIcon.style.display = 'block';
-            if (pauseIcon) pauseIcon.style.display = 'none';
-
-            const playVideoBtnEl = document.querySelector('.play-video-btn');
-            if (playVideoBtnEl) {
-                playVideoBtnEl.style.display = 'inline-flex';
+            const wrapper = journeyVideo.closest('.chapter-video-wrapper');
+            if (wrapper) {
+                wrapper.classList.remove('active');
             }
 
             const bgMusic = document.getElementById('bg-music');
@@ -1572,7 +1518,7 @@
         initSmoothScroll();
         setupVideoFallback();
         initCountdown(); // Initialize countdown
-        initJourneyVideoControls(); // Journey video controls
+        initJourneyCarousels(); // Journey carousels
         revealCelebrationCards(); // Celebration card reveals
         setupMapInteractions();
         setupSendMethodModal(); // RSVP send method modal
