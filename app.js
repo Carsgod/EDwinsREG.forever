@@ -824,6 +824,8 @@
 
     // ---- Confetti System ----
     function initConfetti() {
+        if (isMobile()) return;
+
         const canvas = document.getElementById('confetti-canvas');
         if (!canvas) return;
 
@@ -938,56 +940,59 @@
         });
     }
    // ---- Auto Scroll ----
-    function initAutoScroll() {
-        let animationId;
-        let active = true;
-        const savedScrollBehavior = document.documentElement.style.scrollBehavior;
+    function initAutoScroll() {
+        if (isMobile()) return;
 
-        const hero = document.querySelector('.hero');
-        if (!hero) return;
+        let animationId;
+        let active = true;
+        const savedScrollBehavior = document.documentElement.style.scrollBehavior;
 
-        const startDelay = 1200;
-        const minSpeed = 1.8;
-        const maxSpeed = 5.0;
+        const hero = document.querySelector('.hero');
+        if (!hero) return;
 
-        function stopAutoScroll() {
-            if (!active) return;
-            active = false;
-            cancelAnimationFrame(animationId);
-            document.documentElement.style.scrollBehavior = savedScrollBehavior;
-            document.removeEventListener('click', stopAutoScroll);
-            document.removeEventListener('touchstart', stopAutoScroll);
-            document.removeEventListener('wheel', stopAutoScroll);
-            document.removeEventListener('keydown', stopAutoScroll);
-        }
+        const startDelay = 1200;
+        const minSpeed = 1.8;
+        const maxSpeed = 5.0;
 
-        function step() {
-            if (!active) return;
+        function stopAutoScroll() {
+            if (!active) return;
+            active = false;
+            cancelAnimationFrame(animationId);
+            document.documentElement.style.scrollBehavior = savedScrollBehavior;
+            document.removeEventListener('click', stopAutoScroll);
+            document.removeEventListener('touchstart', stopAutoScroll);
+            document.removeEventListener('touchmove', stopAutoScroll);
+            document.removeEventListener('wheel', stopAutoScroll);
+            document.removeEventListener('keydown', stopAutoScroll);
+        }
 
-            const totalScroll = document.body.scrollHeight - window.innerHeight;
-            const progress = Math.min(1, window.scrollY / totalScroll);
+        function step() {
+            if (!active) return;
 
-            if (progress >= 0.98) {
-                stopAutoScroll();
-                return;
-            }
+            const totalScroll = document.body.scrollHeight - window.innerHeight;
+            const progress = Math.min(1, window.scrollY / totalScroll);
 
-            const speed = minSpeed + (maxSpeed - minSpeed) * (0.5 + 0.5 * Math.sin(progress * Math.PI));
-            window.scrollBy(0, speed);
+            if (progress >= 0.98) {
+                stopAutoScroll();
+                return;
+            }
 
-            animationId = requestAnimationFrame(step);
-        }
+            const speed = minSpeed + (maxSpeed - minSpeed) * (0.5 + 0.5 * Math.sin(progress * Math.PI));
+            window.scrollBy(0, speed);
 
-        setTimeout(() => {
-            document.documentElement.style.scrollBehavior = 'auto';
-            animationId = requestAnimationFrame(step);
-            document.addEventListener('click', stopAutoScroll, { once: true });
-            document.addEventListener('touchstart', stopAutoScroll, { once: true });
-        }, startDelay);
+            animationId = requestAnimationFrame(step);
+        }
 
-        document.addEventListener('wheel', stopAutoScroll, { once: true });
-        document.addEventListener('keydown', stopAutoScroll, { once: true });
-    }
+        setTimeout(() => {
+            document.documentElement.style.scrollBehavior = 'auto';
+            animationId = requestAnimationFrame(step);
+            document.addEventListener('click', stopAutoScroll, { once: true });
+            document.addEventListener('touchstart', stopAutoScroll, { once: true });
+            document.addEventListener('touchmove', stopAutoScroll, { once: true });
+            document.addEventListener('wheel', stopAutoScroll, { once: true });
+            document.addEventListener('keydown', stopAutoScroll, { once: true });
+        }, startDelay);
+    }
     // ---- Cinematic Gallery ----
     function initCinematicGallery() {
         const track = document.querySelector('.gallery-track');
@@ -1077,10 +1082,31 @@
         }
     }
 
+    function isMobile() {
+        return /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+    }
+
     function playMusic() {
         const bgMusic = document.getElementById('bg-music');
         if (!bgMusic) return;
-        bgMusic.play().then(() => updateMusicUI(true)).catch(() => {});
+
+        if (!audioContext) {
+            if (!isMobile()) {
+                setupAudioVisualizer();
+            } else {
+                fallbackVisualizer();
+            }
+        }
+
+        if (audioContext && audioContext.state === 'suspended') {
+            audioContext.resume().then(() => {
+                bgMusic.play().then(() => updateMusicUI(true)).catch(() => {});
+            }).catch(() => {
+                bgMusic.play().then(() => updateMusicUI(true)).catch(() => {});
+            });
+        } else {
+            bgMusic.play().then(() => updateMusicUI(true)).catch(() => {});
+        }
     }
 
     function initMusic() {
@@ -1116,8 +1142,9 @@
         document.addEventListener('touchstart', unlockAudio, { once: true });
         document.addEventListener('keydown', unlockAudio, { once: true });
 
-        playMusic();
-        setupAudioVisualizer();
+        if (!isMobile()) {
+            playMusic();
+        }
     }
 
     function setupAudioVisualizer() {
@@ -1421,8 +1448,10 @@
         let resumeTimeout = null;
         let lastTime = null;
         let originals = [];
+        let carouselAnimationId = null;
 
         function setupCarouselPause() {
+            if (isMobile()) return;
             track.addEventListener('pointerenter', () => {
                 paused = true;
                 clearTimeout(resumeTimeout);
@@ -1456,12 +1485,16 @@
                 track.style.transform = `translateX(${pos}px)`;
             }
 
-            requestAnimationFrame(animateCarousel);
+            if (!isMobile()) {
+                carouselAnimationId = requestAnimationFrame(animateCarousel);
+            }
         }
 
         setupCarouselPause();
         setTimeout(rebuildCarousel, 100);
-        requestAnimationFrame(animateCarousel);
+        if (!isMobile()) {
+            requestAnimationFrame(animateCarousel);
+        }
 
         // Floating hearts
         function createFloatingHeart() {
@@ -1480,7 +1513,7 @@
         }
 
         const particlesContainer = document.getElementById('wishesParticles');
-        if (particlesContainer) {
+        if (particlesContainer && !isMobile()) {
             for (let i = 0; i < 10; i++) {
                 setTimeout(() => {
                     createFloatingHeart();
