@@ -985,11 +985,15 @@
         setTimeout(() => {
             document.documentElement.style.scrollBehavior = 'auto';
             animationId = requestAnimationFrame(step);
-            document.addEventListener('click', stopAutoScroll, { once: true });
-            document.addEventListener('touchstart', stopAutoScroll, { once: true });
-            document.addEventListener('touchmove', stopAutoScroll, { once: true });
-            document.addEventListener('wheel', stopAutoScroll, { once: true });
-            document.addEventListener('keydown', stopAutoScroll, { once: true });
+            const unlockAndPlay = () => {
+                playMusic();
+                document.removeEventListener('click', unlockAndPlay);
+                document.removeEventListener('touchstart', unlockAndPlay);
+                document.removeEventListener('keydown', unlockAndPlay);
+            };
+            document.addEventListener('click', unlockAndPlay, { once: true });
+            document.addEventListener('touchstart', unlockAndPlay, { once: true });
+            document.addEventListener('keydown', unlockAndPlay, { once: true });
         }, startDelay);
     }
     // ---- Cinematic Gallery ----
@@ -1081,11 +1085,15 @@
         }
     }
 
+    function isMobile() {
+        return /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+    }
+
     function playMusic() {
         const bgMusic = document.getElementById('bg-music');
         if (!bgMusic) return;
 
-        if (!audioContext) {
+        if (!audioContext && !isMobile()) {
             setupAudioVisualizer();
         }
 
@@ -1132,8 +1140,6 @@
         document.addEventListener('click', unlockAudio, { once: true });
         document.addEventListener('touchstart', unlockAudio, { once: true });
         document.addEventListener('keydown', unlockAudio, { once: true });
-
-        playMusic();
     }
 
     function setupAudioVisualizer() {

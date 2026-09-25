@@ -4103,6 +4103,11 @@ cite {
     border-left: 2px solid var(--color-gold);
 }
 
+.footer-message {
+    color: #f4cf8e;
+    opacity: 0.95;
+}
+
 .footer-message::before {
     content: '♥';
     position: absolute;
