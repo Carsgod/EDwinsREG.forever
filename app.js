@@ -374,6 +374,9 @@
                 window.open(url, '_blank');
                 if (rsvpForm) rsvpForm.style.display = 'none';
                 if (rsvpSuccess) rsvpSuccess.classList.add('show');
+                if (typeof stopWishesParticles === 'function') {
+                    stopWishesParticles();
+                }
             });
         });
 
@@ -824,8 +827,6 @@
 
     // ---- Confetti System ----
     function initConfetti() {
-        if (isMobile()) return;
-
         const canvas = document.getElementById('confetti-canvas');
         if (!canvas) return;
 
@@ -941,8 +942,6 @@
     }
    // ---- Auto Scroll ----
     function initAutoScroll() {
-        if (isMobile()) return;
-
         let animationId;
         let active = true;
         const savedScrollBehavior = document.documentElement.style.scrollBehavior;
@@ -1082,20 +1081,12 @@
         }
     }
 
-    function isMobile() {
-        return /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
-    }
-
     function playMusic() {
         const bgMusic = document.getElementById('bg-music');
         if (!bgMusic) return;
 
         if (!audioContext) {
-            if (!isMobile()) {
-                setupAudioVisualizer();
-            } else {
-                fallbackVisualizer();
-            }
+            setupAudioVisualizer();
         }
 
         if (audioContext && audioContext.state === 'suspended') {
@@ -1142,9 +1133,7 @@
         document.addEventListener('touchstart', unlockAudio, { once: true });
         document.addEventListener('keydown', unlockAudio, { once: true });
 
-        if (!isMobile()) {
-            playMusic();
-        }
+        playMusic();
     }
 
     function setupAudioVisualizer() {
@@ -1449,9 +1438,9 @@
         let lastTime = null;
         let originals = [];
         let carouselAnimationId = null;
+        const heartIntervals = [];
 
         function setupCarouselPause() {
-            if (isMobile()) return;
             track.addEventListener('pointerenter', () => {
                 paused = true;
                 clearTimeout(resumeTimeout);
@@ -1485,16 +1474,12 @@
                 track.style.transform = `translateX(${pos}px)`;
             }
 
-            if (!isMobile()) {
-                carouselAnimationId = requestAnimationFrame(animateCarousel);
-            }
+            requestAnimationFrame(animateCarousel);
         }
 
         setupCarouselPause();
         setTimeout(rebuildCarousel, 100);
-        if (!isMobile()) {
-            requestAnimationFrame(animateCarousel);
-        }
+        requestAnimationFrame(animateCarousel);
 
         // Floating hearts
         function createFloatingHeart() {
@@ -1513,14 +1498,25 @@
         }
 
         const particlesContainer = document.getElementById('wishesParticles');
-        if (particlesContainer && !isMobile()) {
+        if (particlesContainer) {
             for (let i = 0; i < 10; i++) {
                 setTimeout(() => {
                     createFloatingHeart();
-                    setInterval(createFloatingHeart, 3000 + Math.random() * 4000);
+                    const intervalId = setInterval(createFloatingHeart, 3000 + Math.random() * 4000);
+                    heartIntervals.push(intervalId);
                 }, i * 800);
             }
         }
+
+        function stopWishesParticles() {
+            heartIntervals.forEach(clearInterval);
+            heartIntervals.length = 0;
+            if (particlesContainer) {
+                particlesContainer.innerHTML = '';
+            }
+        }
+
+        window.stopWishesParticles = stopWishesParticles;
 
         window.addEventListener('resize', () => {
             requestAnimationFrame(rebuildCarousel);
