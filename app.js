@@ -606,34 +606,15 @@
     }
 
     function setupMapInteractions() {
-        celebrationCards.forEach(card => {
-            const mapEl = card.querySelector('.card-map');
-            const btn = card.querySelector('.show-map-btn');
-
-            if (!mapEl || !btn) return;
-
-            // Desktop hover
-            if (window.matchMedia('(hover: hover)').matches) {
-                card.addEventListener('mouseenter', () => {
-                    mapEl.classList.add('visible-map');
-                    mapEl.classList.remove('hidden-map');
-                });
-
-                card.addEventListener('mouseleave', () => {
-                    mapEl.classList.remove('visible-map');
-                    mapEl.classList.add('hidden-map');
-                });
-            }
-
-            // Mobile tap
-            if (window.matchMedia('(hover: none)').matches || window.innerWidth <= 768) {
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const isVisible = mapEl.classList.contains('visible-map');
-                    mapEl.classList.toggle('visible-map', !isVisible);
-                    mapEl.classList.toggle('hidden-map', isVisible);
-                });
-            }
+        const mapButtons = document.querySelectorAll('.show-map-btn');
+        mapButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const mapEl = btn.closest('.celebration-card')?.querySelector('.card-map');
+                if (!mapEl) return;
+                const isVisible = mapEl.classList.contains('visible-map');
+                mapEl.classList.toggle('visible-map', !isVisible);
+                mapEl.classList.toggle('hidden-map', isVisible);
+            });
         });
     }
 
@@ -985,15 +966,20 @@
         setTimeout(() => {
             document.documentElement.style.scrollBehavior = 'auto';
             animationId = requestAnimationFrame(step);
-            const unlockAndPlay = () => {
+            const stopAndPlay = () => {
+                stopAutoScroll();
                 playMusic();
-                document.removeEventListener('click', unlockAndPlay);
-                document.removeEventListener('touchstart', unlockAndPlay);
-                document.removeEventListener('keydown', unlockAndPlay);
+                document.removeEventListener('click', stopAndPlay);
+                document.removeEventListener('touchstart', stopAndPlay);
+                document.removeEventListener('touchmove', stopAndPlay);
+                document.removeEventListener('wheel', stopAndPlay);
+                document.removeEventListener('keydown', stopAndPlay);
             };
-            document.addEventListener('click', unlockAndPlay, { once: true });
-            document.addEventListener('touchstart', unlockAndPlay, { once: true });
-            document.addEventListener('keydown', unlockAndPlay, { once: true });
+            document.addEventListener('click', stopAndPlay, { once: true });
+            document.addEventListener('touchstart', stopAndPlay, { once: true });
+            document.addEventListener('touchmove', stopAndPlay, { once: true });
+            document.addEventListener('wheel', stopAndPlay, { once: true });
+            document.addEventListener('keydown', stopAndPlay, { once: true });
         }, startDelay);
     }
     // ---- Cinematic Gallery ----
