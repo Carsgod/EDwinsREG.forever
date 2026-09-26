@@ -1406,15 +1406,64 @@
         });
 
         if (wishModalForm) {
+            let pendingWish = null;
+            const wishContactModal = document.getElementById('wishContactModal');
+            const wishContactOptions = document.getElementById('wishContactOptions');
+            const wishContactBackBtn = document.getElementById('wishContactBackBtn');
+
             wishModalForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const name = wishModalName?.value || '';
                 const relation = wishModalRelation?.value || '';
                 const message = wishModalMessage?.value || '';
                 if (!name.trim() || !relation.trim() || !message.trim()) return;
-                const wish = addWish(name, relation, message);
-                rebuildCarousel();
+
+                pendingWish = { name, relation, message };
                 closeWishModal();
+                if (wishContactModal) {
+                    wishContactModal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }
+            });
+
+            wishContactBackBtn?.addEventListener('click', () => {
+                if (wishContactModal) wishContactModal.classList.remove('active');
+                document.body.style.overflow = '';
+                pendingWish = null;
+                openWishModal();
+            });
+
+            wishContactOptions?.querySelectorAll('.contact-option-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (!pendingWish) return;
+                    const phone = btn.dataset.phone;
+                    const text = encodeURIComponent(`💌 *Edwin & Regina - Wedding Wish*\n\n*From:* ${pendingWish.name}\n*Relation:* ${pendingWish.relation}\n\n*Wish:* ${pendingWish.message}`);
+                    const url = `https://wa.me/${phone}?text=${text}`;
+                    addWish(pendingWish.name, pendingWish.relation, pendingWish.message);
+                    rebuildCarousel();
+                    if (wishContactModal) wishContactModal.classList.remove('active');
+                    document.body.style.overflow = '';
+                    pendingWish = null;
+                    window.open(url, '_blank');
+                });
+            });
+
+            document.querySelectorAll('#wishContactModal .modal-close-btn').forEach(btn => {
+                if (btn.id !== 'wishContactBackBtn') {
+                    btn.addEventListener('click', () => {
+                        if (wishContactModal) wishContactModal.classList.remove('active');
+                        document.body.style.overflow = '';
+                        pendingWish = null;
+                    });
+                }
+            });
+
+            document.getElementById('wishContactModal')?.addEventListener('click', (e) => {
+                if (e.target === document.getElementById('wishContactModal')) {
+                    if (wishContactModal) wishContactModal.classList.remove('active');
+                    document.body.style.overflow = '';
+                    pendingWish = null;
+                }
             });
         }
 
